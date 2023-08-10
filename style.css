@@ -64,3 +64,26 @@ main {
     font-size: 20px;
     line-height: 30px;
 }
+
+#keyboard-container {
+    padding: 16px;
+    margin-top: 16px;
+}
+
+#keyboard-container input {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    padding: 3px;
+}
+
+#keyboard-container input[type=number] {
+    border: none;
+    text-align: right;
+    width: 3em;
+}
+
+#keyboard-container input[type=button] {
+    border: none;
+    padding: 3px 8px;
+    border-radius: 10px;
+}

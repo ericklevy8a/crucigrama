@@ -1,10 +1,10 @@
 
-const TILEBOARD_ROWS = 9;
-const TILEBOARD_COLS = 9;
+var TILEBOARD_ROWS = 9;
+var TILEBOARD_COLS = 9;
 
-const TILEBOARD_BLACKS = 2 * Math.ceil(TILEBOARD_ROWS * TILEBOARD_COLS / 10);
+var TILEBOARD_BLACKS = Math.round(TILEBOARD_ROWS * TILEBOARD_COLS / 4);
 
-const MAX_SELECTIONS = 10;
+const MAX_SELECTIONS = 32;
 
 const VALID_CHARS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
 
@@ -44,7 +44,7 @@ function initTileboard() {
     tileboard = [];
     for (let r = 0; r < TILEBOARD_ROWS; r++) {
         let row = [];
-        for (let c = 0; c < TILEBOARD_ROWS; c++) {
+        for (let c = 0; c < TILEBOARD_COLS; c++) {
             let tile = new Tile();
             row.push(tile);
         }
@@ -344,7 +344,7 @@ function drawTileboard() {
     for (let row = 0; row < TILEBOARD_ROWS; row++) {
         const tileRow = document.createElement('div');
         tileRow.className = 'tile-row';
-        for (let col = 0; col < TILEBOARD_ROWS; col++) {
+        for (let col = 0; col < TILEBOARD_COLS; col++) {
             const tile = document.createElement('div');
             const tileNum = document.createElement('div');
             const tileChar = document.createElement('div');
@@ -403,6 +403,64 @@ function lpad(str, num, char = ' ') {
     return char.repeat(num).concat(str).slice(-num);
 }
 
+// UI FUNCTIONS
+
+function disableButton(id, flag) {
+    const btnSolve = document.getElementById(id);
+    btnSolve.disabled = flag;
+}
+
+function getParams() {
+    const ROWS = parseInt(document.getElementById('tileboard-rows').value);
+    const COLS = parseInt(document.getElementById('tileboard-cols').value);
+    let BLACKS = parseInt(document.getElementById('tileboard-blacks').value);
+    if (ROWS !== TILEBOARD_ROWS || COLS !== TILEBOARD_COLS) {
+        BLACKS = Math.round(TILEBOARD_ROWS * TILEBOARD_COLS / 4);
+    }
+    TILEBOARD_ROWS = ROWS;
+    TILEBOARD_COLS = COLS;
+    TILEBOARD_BLACKS = BLACKS;
+}
+
+function setParams() {
+    document.getElementById('tileboard-rows').value = TILEBOARD_ROWS;
+    document.getElementById('tileboard-cols').value = TILEBOARD_COLS;
+    document.getElementById('tileboard-blacks').value = TILEBOARD_BLACKS;
+    document.getElementById('tileboard-blacks').max = TILEBOARD_ROWS * TILEBOARD_COLS;
+}
+
+function changeParams() {
+    disableButton('btn-solve', true);
+    disableButton('btn-change', false);
+    getParams();
+    // validate ranges
+    TILEBOARD_ROWS = Math.max(8, Math.min(16, TILEBOARD_ROWS));
+    TILEBOARD_COLS = Math.max(8, Math.min(16, TILEBOARD_COLS));
+    TILEBOARD_BLACKS = Math.max(0, Math.min(Math.round(TILEBOARD_ROWS * TILEBOARD_COLS), TILEBOARD_BLACKS));
+    setParams();
+}
+
+function changeBoard() {
+    getParams();
+    initTileboard();
+    blackTileboard();
+    measureTileboard();
+    initWordList();
+    drawTileboard();
+    //disableButton('btn-change', true);
+    disableButton('btn-solve', false);
+}
+
+function run() {
+    console.time('solver');
+    resetPlacesWord();
+    resetTileboard();
+    solver();
+    drawTileboard();
+    console.table(places);
+    console.timeEnd('solver');
+}
+
 // INITIALIZE THE GAME
 
 getDictionary();
@@ -414,13 +472,6 @@ measureTileboard();
 initWordList();
 
 drawTileboard();
+setParams();
 
-function run() {
-    console.time('solver');
-    resetPlacesWord();
-    resetTileboard();
-    solver();
-    drawTileboard();
-    console.table(places);
-    console.timeEnd('solver');
-}
+// End of file

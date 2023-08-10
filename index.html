@@ -14,7 +14,13 @@
     <main id="game-container">
         <section id="tileboard-container"></section>
         <section id="definition-container"></section>
-        <section id="keyboard-container"></section>
+        <section id="keyboard-container">
+            <input type="number" name="tileboard-rows" id="tileboard-rows" value="" min="8" max="16" maxlength="2" onchange="changeParams()">
+            <input type="number" name="tileboard-cols" id="tileboard-cols" value="" min="8" max="16" maxlength="2" onchange="changeParams()">
+            <input type="number" name="tileboard-blacks" id="tileboard-blacks" value="" min="0" max="0" maxlength="2" onchange="changeParams()">
+            <input type="button" name="btn-change" id="btn-change" value="Change" onclick="changeBoard()">
+            <input type="button" name="btn-solve" id="btn-solve" value="Solve" onclick="run()">
+        </section>
     </main>
 </body>
 
